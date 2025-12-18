@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>مدير كلمات المرور</title>
+    <!-- رابط أيقونة التطبيق -->
+    <link rel="icon" href="C:\Users\Hussien\Desktop\mangiment\images\icon.png" type="image/png">
+    <link rel="apple-touch-icon" href="C:\Users\Hussien\Desktop\mangiment\images\icon.png">
+    <!-- رابط بديل إذا لم تكن الصورة متوفرة -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔐</text></svg>">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -200,6 +206,31 @@
             min-height: 20px;
         }
 
+        /* زر عرض/إخفاء البحث */
+        .search-toggle-btn {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+
+        .search-toggle-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-50%) scale(1.1);
+        }
+
         /* رأس العودة */
         .back-header {
             padding: 15px 20px;
@@ -243,6 +274,7 @@
             color: white;
             padding: 20px;
             padding-top: max(20px, env(safe-area-inset-top));
+            position: relative;
         }
 
         .header-content {
@@ -293,10 +325,24 @@
             opacity: 0.9;
         }
 
+        /* شريط البحث - مخفي افتراضياً */
         .search-container {
             padding: 15px 20px;
             background: white;
             border-bottom: 1px solid var(--gray-light);
+            display: none; /* مخفي افتراضياً */
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .search-box {
@@ -928,13 +974,18 @@
                 </form>
                 
                 <div style="margin-top: 20px; font-size: 14px; color: var(--gray);">
-                    <i class="fas fa-info-circle"></i> كلمة المرور الافتراضية: bun2004
+                    <i class="fas fa-info-circle"></i> المطور: المهندس حسين محمد
                 </div>
             </div>
         </div>
 
         <!-- لوحة التحكم -->
         <div class="dashboard" id="dashboard">
+            <!-- زر عرض/إخفاء البحث -->
+            <button class="search-toggle-btn" id="searchToggleBtn">
+                <i class="fas fa-search"></i>
+            </button>
+
             <!-- شريط العنوان -->
             <div class="app-header">
                 <div class="header-content">
@@ -955,11 +1006,14 @@
                 </div>
             </div>
 
-            <!-- شريط البحث -->
-            <div class="search-container">
+            <!-- شريط البحث - مخفي افتراضياً -->
+            <div class="search-container" id="searchContainer">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
                     <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن كلمة مرور...">
+                    <button type="button" id="clearSearch" style="background: none; border: none; color: var(--gray); padding: 5px; margin-right: 5px; display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             </div>
 
@@ -1313,7 +1367,8 @@
             deletingPasswordId: null,
             currentScreen: 'dashboard',
             generatedPassword: '',
-            lastActivity: new Date().getTime()
+            lastActivity: new Date().getTime(),
+            isSearchVisible: false // حالة شريط البحث
         };
 
         // تهيئة التطبيق
@@ -1325,6 +1380,9 @@
             
             // توليد كلمة مرور أولية
             generatePassword();
+            
+            // إخفاء شريط البحث افتراضياً
+            hideSearchBar();
         });
 
         // تحميل كلمات المرور المحفوظة
@@ -1449,9 +1507,24 @@
                 openPasswordModal();
             });
 
+            // زر عرض/إخفاء البحث
+            document.getElementById('searchToggleBtn').addEventListener('click', function() {
+                toggleSearchBar();
+            });
+
             // البحث
             document.getElementById('searchInput').addEventListener('input', function() {
                 state.searchQuery = this.value;
+                const clearBtn = document.getElementById('clearSearch');
+                clearBtn.style.display = this.value ? 'block' : 'none';
+                renderPasswords();
+            });
+
+            // زر مسح البحث
+            document.getElementById('clearSearch').addEventListener('click', function() {
+                document.getElementById('searchInput').value = '';
+                state.searchQuery = '';
+                this.style.display = 'none';
                 renderPasswords();
             });
 
@@ -1470,6 +1543,10 @@
                 btn.addEventListener('click', function() {
                     const screen = this.dataset.screen;
                     showScreen(screen);
+                    // إخفاء شريط البحث عند الانتقال بين الشاشات
+                    if (screen !== 'dashboard') {
+                        hideSearchBar();
+                    }
                 });
             });
 
@@ -1538,6 +1615,50 @@
             });
         }
 
+        // عرض/إخفاء شريط البحث
+        function toggleSearchBar() {
+            const searchContainer = document.getElementById('searchContainer');
+            const searchToggleBtn = document.getElementById('searchToggleBtn');
+            
+            if (state.isSearchVisible) {
+                hideSearchBar();
+            } else {
+                showSearchBar();
+            }
+        }
+
+        function showSearchBar() {
+            const searchContainer = document.getElementById('searchContainer');
+            const searchToggleBtn = document.getElementById('searchToggleBtn');
+            
+            searchContainer.style.display = 'block';
+            searchToggleBtn.innerHTML = '<i class="fas fa-times"></i>';
+            searchToggleBtn.style.background = 'var(--danger)';
+            state.isSearchVisible = true;
+            
+            // التركيز على حقل البحث
+            setTimeout(() => {
+                document.getElementById('searchInput').focus();
+            }, 300);
+        }
+
+        function hideSearchBar() {
+            const searchContainer = document.getElementById('searchContainer');
+            const searchToggleBtn = document.getElementById('searchToggleBtn');
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearch');
+            
+            searchContainer.style.display = 'none';
+            searchToggleBtn.innerHTML = '<i class="fas fa-search"></i>';
+            searchToggleBtn.style.background = 'var(--primary)';
+            searchInput.value = '';
+            clearBtn.style.display = 'none';
+            state.searchQuery = '';
+            state.isSearchVisible = false;
+            
+            renderPasswords();
+        }
+
         // عرض شاشة الدخول
         function showLoginScreen() {
             document.getElementById('loginScreen').style.display = 'flex';
@@ -1547,6 +1668,7 @@
             document.getElementById('masterPassword').value = '';
             document.getElementById('loginError').textContent = '';
             state.currentScreen = 'login';
+            hideSearchBar();
         }
 
         // عرض لوحة التحكم
@@ -1561,6 +1683,7 @@
             state.currentScreen = 'dashboard';
             
             renderPasswords();
+            hideSearchBar(); // إخفاء شريط البحث عند فتح الشاشة الرئيسية
         }
 
         // عرض الشاشة المطلوبة
@@ -1575,6 +1698,11 @@
             
             if (screen === 'generator') {
                 generatePassword();
+            }
+            
+            // إخفاء شريط البحث عند الانتقال من الشاشة الرئيسية
+            if (screen !== 'dashboard') {
+                hideSearchBar();
             }
         }
 
