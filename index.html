@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مدير كلمات المرور</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --secondary-dark: #059669;
+            --danger: #ef4444;
+            --danger-dark: #dc2626;
+            --warning: #f59e0b;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+            --gray-light: #e5e7eb;
+            --gray-dark: #374151;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-top: env(safe-area-inset-top);
+            overflow-x: hidden;
+        }
+
+        .app {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        /* شاشة تسجيل الدخول */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .login-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+
+        .login-icon {
+            font-size: 64px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .login-subtitle {
+            color: var(--gray);
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            text-align: right;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--gray-light);
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            transition: border 0.3s;
+            background: var(--light);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .password-toggle {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 15px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-dark);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 14px;
+            width: auto;
+        }
+
+        .error-message {
+            color: var(--danger);
+            text-align: center;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
+        /* رأس العودة */
+        .back-header {
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--light);
+            border: 2px solid var(--gray-light);
+            border-radius: var(--radius-sm);
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* لوحة التحكم */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .app-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .stats-card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stats-icon {
+            font-size: 32px;
+        }
+
+        .stats-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .stats-info p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .search-container {
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--light);
+            border-radius: 50px;
+            padding: 10px 15px;
+            border: 2px solid var(--gray-light);
+        }
+
+        .search-box i {
+            color: var(--gray);
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 5px 10px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .categories {
+            padding: 15px 20px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            background: white;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .category-btn {
+            padding: 8px 15px;
+            background: var(--light);
+            border: 2px solid var(--gray-light);
+            border-radius: 50px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .passwords-list {
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .password-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-light);
+            transition: transform 0.3s;
+        }
+
+        .password-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .service-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .service-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .service-name {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .service-username {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: var(--light);
+            color: var(--dark);
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .copy-btn:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .password-display {
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .password-hidden {
+            font-size: 20px;
+            letter-spacing: 2px;
+        }
+
+        .password-visible {
+            font-family: monospace;
+            font-size: 16px;
+            word-break: break-all;
+        }
+
+        .password-notes {
+            color: var(--gray);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-top: 10px;
+            padding: 10px;
+            background: var(--light);
+            border-radius: var(--radius-sm);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            padding-bottom: max(15px, env(safe-area-inset-bottom));
+            border-top: 1px solid var(--gray-light);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 14px;
+            transition: color 0.3s;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            min-width: 60px;
+        }
+
+        .nav-btn i {
+            font-size: 20px;
+        }
+
+        .nav-btn.active {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            background: var(--primary-dark);
+        }
+
+        /* النوافذ المنبثقة */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 450px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlide 0.3s ease-out;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--gray);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: var(--light);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid var(--gray-light);
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .form-row {
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .icon-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .icon-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light);
+            border: 2px solid var(--gray-light);
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s;
+        }
+
+        .icon-option.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        /* شاشة المولد */
+        .generator-screen {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .generator-content {
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        .generator-result {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .generated-password {
+            font-family: monospace;
+            font-size: 24px;
+            margin: 20px 0;
+            word-break: break-all;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+        }
+
+        .strength-meter {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .strength-weak {
+            background: var(--danger);
+            width: 25%;
+        }
+
+        .strength-medium {
+            background: var(--warning);
+            width: 50%;
+        }
+
+        .strength-strong {
+            background: var(--secondary);
+            width: 75%;
+        }
+
+        .strength-very-strong {
+            background: #10b981;
+            width: 100%;
+        }
+
+        /* شاشة الإعدادات */
+        .settings-screen {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .settings-content {
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        .settings-list {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .setting-item {
+            padding: 20px;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray-light);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* تحسينات الجوال */
+        @media (max-width: 500px) {
+            .app {
+                border-radius: 0;
+            }
+            
+            .modal-content {
+                max-height: 80vh;
+            }
+            
+            .service-name {
+                font-size: 16px;
+            }
+            
+            .password-hidden {
+                font-size: 18px;
+            }
+            
+            .generated-password {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+            
+            .login-icon {
+                font-size: 48px;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary);
+            color: white;
+            padding: 15px 20px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 1001;
+            animation: slideIn 0.3s ease-out;
+            max-width: 300px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray);
+        }
+
+        /* أنميشن للبطاقات */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .password-card {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- تطبيق رئيسي -->
+    <div class="app">
+        <!-- شاشة تسجيل الدخول -->
+        <div class="login-screen" id="loginScreen">
+            <div class="login-card">
+                <div class="login-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h1 class="login-title">مدير كلمات المرور</h1>
+                <p class="login-subtitle">تطبيق آمن لحفظ جميع كلمات المرور الخاصة بك</p>
+                
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label class="input-label">كلمة المرور الرئيسية</label>
+                        <div style="position: relative;">
+                            <input type="password" id="masterPassword" class="input-field" placeholder="أدخل كلمة المرور" required>
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </button>
+                    
+                    <div class="error-message" id="loginError"></div>
+                </form>
+                
+                <div style="margin-top: 20px; font-size: 14px; color: var(--gray);">
+                    <i class="fas fa-info-circle"></i> كلمة المرور الافتراضية: bun2004
+                </div>
+            </div>
+        </div>
+
+        <!-- لوحة التحكم -->
+        <div class="dashboard" id="dashboard">
+            <!-- شريط العنوان -->
+            <div class="app-header">
+                <div class="header-content">
+                    <h1 class="app-title">كلمات المرور</h1>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+                
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h3 id="passwordCount">0 كلمة مرور</h3>
+                        <p>محمية بأمان</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- شريط البحث -->
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن كلمة مرور...">
+                </div>
+            </div>
+
+            <!-- فئات التصفية -->
+            <div class="categories">
+                <button class="category-btn active" data-category="all">الكل</button>
+                <button class="category-btn" data-category="social">التواصل</button>
+                <button class="category-btn" data-category="email">البريد</button>
+                <button class="category-btn" data-category="bank">البنوك</button>
+                <button class="category-btn" data-category="shopping">التسوق</button>
+                <button class="category-btn" data-category="work">العمل</button>
+                <button class="category-btn" data-category="other">أخرى</button>
+            </div>
+
+            <!-- قائمة كلمات المرور -->
+            <div class="passwords-list" id="passwordsList">
+                <!-- سيتم ملؤها ديناميكياً -->
+                <div class="empty-state">
+                    <i class="fas fa-key"></i>
+                    <h3>لا توجد كلمات مرور</h3>
+                    <p>انقر على زر + لإضافة أول كلمة مرور</p>
+                </div>
+            </div>
+
+            <!-- شريط التنقل السفلي -->
+            <div class="bottom-nav">
+                <button class="nav-btn active" data-screen="dashboard">
+                    <i class="fas fa-key"></i>
+                    <span>كلمات المرور</span>
+                </button>
+                <button class="nav-btn" data-screen="generator">
+                    <i class="fas fa-magic"></i>
+                    <span>المولد</span>
+                </button>
+                <button class="nav-btn" data-screen="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>الإعدادات</span>
+                </button>
+            </div>
+
+            <!-- زر الإضافة العائم -->
+            <button class="fab" id="addPasswordBtn">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+
+        <!-- شاشة مولد كلمات المرور -->
+        <div class="generator-screen" id="generatorScreen">
+            <!-- رأس العودة -->
+            <div class="back-header">
+                <button class="back-btn" onclick="showScreen('dashboard')">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>العودة</span>
+                </button>
+                <h2 style="margin: 0; flex-grow: 1; text-align: center;">مولد كلمات المرور</h2>
+            </div>
+            
+            <!-- محتوى المولد -->
+            <div class="generator-content">
+                <div class="generator-result">
+                    <h3>كلمة المرور المولدة</h3>
+                    <div class="generated-password" id="generatedPassword">...</div>
+                    <div class="strength-meter">
+                        <div class="strength-fill" id="strengthFill"></div>
+                    </div>
+                    <p id="strengthText">قوة كلمة المرور</p>
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="btn btn-outline" id="copyGeneratedPassword">
+                            <i class="fas fa-copy"></i> نسخ
+                        </button>
+                        <button class="btn btn-secondary" id="usePassword">
+                            <i class="fas fa-check"></i> استخدام
+                        </button>
+                    </div>
+                </div>
+
+                <div class="password-card">
+                    <h3 style="margin-bottom: 15px;">إعدادات المولد</h3>
+                    
+                    <div class="form-row">
+                        <label class="input-label">طول كلمة المرور</label>
+                        <input type="range" id="lengthSlider" min="8" max="32" value="16" class="input-field">
+                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                            <span id="lengthValue">16</span>
+                            <span>أحرف</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="input-label">أنواع المحارف</label>
+                        <div style="margin-top: 10px;">
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <input type="checkbox" id="uppercase" checked> أحرف كبيرة (A-Z)
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <input type="checkbox" id="lowercase" checked> أحرف صغيرة (a-z)
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <input type="checkbox" id="numbers" checked> أرقام (0-9)
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="symbols" checked> رموز (!@#$%^&*)
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" id="generatePasswordBtn" style="margin-top: 20px;">
+                        <i class="fas fa-redo"></i> توليد كلمة مرور جديدة
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- شاشة الإعدادات -->
+        <div class="settings-screen" id="settingsScreen">
+            <!-- رأس العودة -->
+            <div class="back-header">
+                <button class="back-btn" onclick="showScreen('dashboard')">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>العودة</span>
+                </button>
+                <h2 style="margin: 0; flex-grow: 1; text-align: center;">الإعدادات</h2>
+            </div>
+            
+            <!-- محتوى الإعدادات -->
+            <div class="settings-content">
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div>
+                            <h4>النسخ التلقائي</h4>
+                            <p style="color: var(--gray); font-size: 14px;">نسخ كلمة المرور عند النقر عليها</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="autoCopy">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div>
+                            <h4>الإغلاق التلقائي</h4>
+                            <p style="color: var(--gray); font-size: 14px;">تسجيل الخروج بعد 5 دقائق من عدم النشاط</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="autoLogout" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div>
+                            <h4>الوضع الداكن</h4>
+                            <p style="color: var(--gray); font-size: 14px;">تفعيل المظهر الداكن</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="darkMode">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="password-card">
+                    <h4 style="margin-bottom: 15px;">نسخ احتياطي</h4>
+                    <p style="color: var(--gray); margin-bottom: 15px; font-size: 14px;">
+                        قم بحفظ نسخة احتياطية من جميع كلمات مرورك في مكان آمن
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <button class="btn btn-outline" id="exportBtn">
+                            <i class="fas fa-download"></i> تصدير البيانات
+                        </button>
+                        <button class="btn btn-outline" id="importBtn">
+                            <i class="fas fa-upload"></i> استيراد البيانات
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="password-card">
+                    <h4 style="margin-bottom: 15px;">حول التطبيق</h4>
+                    <p style="color: var(--gray); margin-bottom: 10px; font-size: 14px;">
+                        <i class="fas fa-code"></i> الإصدار 1.0.0
+                    </p>
+                    <p style="color: var(--gray); margin-bottom: 10px; font-size: 14px;">
+                        <i class="fas fa-shield-alt"></i> تم التطوير خصيصاً لحماية كلمات مرورك
+                    </p>
+                    <p style="color: var(--gray); font-size: 14px;">
+                        <i class="fas fa-mobile-alt"></i> جميع البيانات مخزنة محلياً على جهازك فقط
+                    </p>
+                </div>
+                
+                <div class="password-card">
+                    <button class="btn btn-danger" id="clearDataBtn">
+                        <i class="fas fa-trash"></i> حذف جميع البيانات
+                    </button>
+                    <p style="color: var(--gray); font-size: 12px; margin-top: 10px; text-align: center;">
+                        تحذير: هذا الإجراء لا يمكن التراجع عنه
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة/تعديل كلمة مرور -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">إضافة كلمة مرور جديدة</h2>
+                <button class="close-btn" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="passwordForm">
+                    <input type="hidden" id="passwordId">
+                    
+                    <div class="form-row">
+                        <label class="input-label">اسم الخدمة</label>
+                        <input type="text" id="serviceName" class="input-field" placeholder="مثال: فيسبوك، جيميل" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="input-label">اسم المستخدم / البريد الإلكتروني</label>
+                        <input type="text" id="username" class="input-field" placeholder="أدخل اسم المستخدم أو البريد" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="input-label">كلمة المرور</label>
+                        <div style="position: relative;">
+                            <input type="password" id="password" class="input-field" placeholder="أدخل كلمة المرور" required>
+                            <button type="button" class="password-toggle" id="togglePasswordModal">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button type="button" class="btn btn-outline btn-small" onclick="generateAndUsePassword()">
+                                <i class="fas fa-magic"></i> توليد كلمة مرور
+                            </button>
+                            <button type="button" class="btn btn-outline btn-small" onclick="copyFromGenerator()">
+                                <i class="fas fa-copy"></i> نسخ من المولد
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="input-label">الفئة</label>
+                        <select id="category" class="input-field" required>
+                            <option value="social">التواصل الاجتماعي</option>
+                            <option value="email">البريد الإلكتروني</option>
+                            <option value="bank">البنوك والمال</option>
+                            <option value="shopping">التسوق</option>
+                            <option value="work">العمل</option>
+                            <option value="other">أخرى</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="input-label">الأيقونة</label>
+                        <div class="icon-selector" id="iconSelector">
+                            <div class="icon-option selected" data-icon="fas fa-globe"><i class="fas fa-globe"></i></div>
+                            <div class="icon-option" data-icon="fas fa-facebook"><i class="fas fa-facebook"></i></div>
+                            <div class="icon-option" data-icon="fas fa-google"><i class="fas fa-google"></i></div>
+                            <div class="icon-option" data-icon="fas fa-envelope"><i class="fas fa-envelope"></i></div>
+                            <div class="icon-option" data-icon="fas fa-credit-card"><i class="fas fa-credit-card"></i></div>
+                            <div class="icon-option" data-icon="fas fa-shopping-cart"><i class="fas fa-shopping-cart"></i></div>
+                            <div class="icon-option" data-icon="fas fa-briefcase"><i class="fas fa-briefcase"></i></div>
+                            <div class="icon-option" data-icon="fas fa-mobile-alt"><i class="fas fa-mobile-alt"></i></div>
+                            <div class="icon-option" data-icon="fas fa-lock"><i class="fas fa-lock"></i></div>
+                            <div class="icon-option" data-icon="fas fa-key"><i class="fas fa-key"></i></div>
+                        </div>
+                        <input type="hidden" id="selectedIcon" value="fas fa-globe">
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="input-label">ملاحظات (اختياري)</label>
+                        <textarea id="notes" class="input-field" rows="3" placeholder="أي ملاحظات إضافية..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelBtn">إلغاء</button>
+                <button class="btn btn-primary" id="savePasswordBtn">حفظ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تأكيد الحذف -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">تأكيد الحذف</h2>
+                <button class="close-btn" id="closeConfirmBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>هل أنت متأكد من حذف كلمة المرور هذه؟ هذا الإجراء لا يمكن التراجع عنه.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelDeleteBtn">إلغاء</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">حذف</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تصدير البيانات -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">تصدير البيانات</h2>
+                <button class="close-btn" id="closeExportBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>انسخ النص التالي واحفظه في مكان آمن:</p>
+                <textarea id="exportData" class="input-field" rows="8" readonly style="width: 100%; font-family: monospace; margin-top: 10px; resize: none;"></textarea>
+                <p style="color: var(--gray); font-size: 14px; margin-top: 10px;">
+                    <i class="fas fa-info-circle"></i> احفظ هذا النص في ملف نصي آمن
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة استيراد البيانات -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">استيراد البيانات</h2>
+                <button class="close-btn" id="closeImportBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>الصق البيانات التي قمت بتصديرها مسبقاً:</p>
+                <textarea id="importData" class="input-field" rows="8" placeholder="الصق بيانات التصدير هنا..." style="width: 100%; font-family: monospace; margin-top: 10px; resize: none;"></textarea>
+                <div class="error-message" id="importError"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelImportBtn">إلغاء</button>
+                <button class="btn btn-primary" id="confirmImportBtn">استيراد</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- الإشعارات -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">تم النسخ إلى الحافظة</span>
+    </div>
+
+    <script>
+        // حالة التطبيق
+        const state = {
+            isAuthenticated: false,
+            masterPassword: 'bun2004', // كلمة المرور الرئيسية الافتراضية
+            passwords: [],
+            currentCategory: 'all',
+            searchQuery: '',
+            editingPasswordId: null,
+            deletingPasswordId: null,
+            currentScreen: 'dashboard',
+            generatedPassword: '',
+            lastActivity: new Date().getTime()
+        };
+
+        // تهيئة التطبيق
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPasswords();
+            setupEventListeners();
+            checkAutoLogin();
+            setupAutoLogout();
+            
+            // توليد كلمة مرور أولية
+            generatePassword();
+        });
+
+        // تحميل كلمات المرور المحفوظة
+        function loadPasswords() {
+            try {
+                const saved = localStorage.getItem('passwordManagerData');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    state.passwords = data.passwords || [];
+                    
+                    // تحميل الإعدادات
+                    document.getElementById('autoCopy').checked = data.settings?.autoCopy || false;
+                    document.getElementById('autoLogout').checked = data.settings?.autoLogout || true;
+                    document.getElementById('darkMode').checked = data.settings?.darkMode || false;
+                    
+                    if (data.settings?.darkMode) {
+                        enableDarkMode();
+                    }
+                    
+                    updatePasswordCount();
+                }
+            } catch (error) {
+                console.error('خطأ في تحميل البيانات:', error);
+                state.passwords = [];
+            }
+        }
+
+        // حفظ كلمات المرور
+        function savePasswords() {
+            const data = {
+                passwords: state.passwords,
+                settings: {
+                    autoCopy: document.getElementById('autoCopy').checked,
+                    autoLogout: document.getElementById('autoLogout').checked,
+                    darkMode: document.getElementById('darkMode').checked
+                }
+            };
+            localStorage.setItem('passwordManagerData', JSON.stringify(data));
+            updatePasswordCount();
+        }
+
+        // التحقق من تسجيل الدخول التلقائي
+        function checkAutoLogin() {
+            const lastLogin = localStorage.getItem('lastLogin');
+            const now = new Date().getTime();
+            
+            if (lastLogin && (now - parseInt(lastLogin)) < 5 * 60 * 1000) { // 5 دقائق
+                showDashboard();
+            }
+        }
+
+        // إعداد تسجيل الخروج التلقائي
+        function setupAutoLogout() {
+            // تحديث وقت النشاط عند أي تفاعل
+            document.addEventListener('click', updateLastActivity);
+            document.addEventListener('keypress', updateLastActivity);
+            document.addEventListener('scroll', updateLastActivity);
+            
+            // التحقق كل دقيقة
+            setInterval(checkAutoLogout, 60000);
+        }
+
+        function updateLastActivity() {
+            state.lastActivity = new Date().getTime();
+        }
+
+        function checkAutoLogout() {
+            if (!document.getElementById('autoLogout').checked) return;
+            
+            const now = new Date().getTime();
+            const inactiveTime = now - state.lastActivity;
+            const fiveMinutes = 5 * 60 * 1000;
+            
+            if (inactiveTime > fiveMinutes && state.currentScreen !== 'login') {
+                showLoginScreen();
+                showNotification('تم تسجيل الخروج تلقائياً بسبب عدم النشاط');
+            }
+        }
+
+        // إعداد مستمعي الأحداث
+        function setupEventListeners() {
+            // تسجيل الدخول
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const password = document.getElementById('masterPassword').value;
+                
+                if (password === state.masterPassword) {
+                    localStorage.setItem('lastLogin', new Date().getTime());
+                    state.lastActivity = new Date().getTime();
+                    showDashboard();
+                    showNotification('تم تسجيل الدخول بنجاح!');
+                } else {
+                    document.getElementById('loginError').textContent = 'كلمة المرور غير صحيحة';
+                }
+            });
+
+            // إظهار/إخفاء كلمة المرور في شاشة الدخول
+            document.getElementById('togglePassword').addEventListener('click', function() {
+                const passwordField = document.getElementById('masterPassword');
+                const icon = this.querySelector('i');
+                
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    passwordField.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+
+            // تسجيل الخروج
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                localStorage.removeItem('lastLogin');
+                showLoginScreen();
+                showNotification('تم تسجيل الخروج بنجاح');
+            });
+
+            // إضافة كلمة مرور جديدة
+            document.getElementById('addPasswordBtn').addEventListener('click', function() {
+                openPasswordModal();
+            });
+
+            // البحث
+            document.getElementById('searchInput').addEventListener('input', function() {
+                state.searchQuery = this.value;
+                renderPasswords();
+            });
+
+            // التصفية بالفئات
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    state.currentCategory = this.dataset.category;
+                    renderPasswords();
+                });
+            });
+
+            // التنقل بين الشاشات
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const screen = this.dataset.screen;
+                    showScreen(screen);
+                });
+            });
+
+            // نافذة إضافة/تعديل كلمة المرور
+            document.getElementById('closeModalBtn').addEventListener('click', closePasswordModal);
+            document.getElementById('cancelBtn').addEventListener('click', closePasswordModal);
+            document.getElementById('savePasswordBtn').addEventListener('click', savePassword);
+            document.getElementById('togglePasswordModal').addEventListener('click', togglePasswordVisibility);
+
+            // اختيار الأيقونة
+            document.querySelectorAll('.icon-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    document.getElementById('selectedIcon').value = this.dataset.icon;
+                });
+            });
+
+            // نافذة تأكيد الحذف
+            document.getElementById('closeConfirmBtn').addEventListener('click', closeConfirmModal);
+            document.getElementById('cancelDeleteBtn').addEventListener('click', closeConfirmModal);
+            document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDeletePassword);
+
+            // مولد كلمات المرور
+            document.getElementById('lengthSlider').addEventListener('input', function() {
+                document.getElementById('lengthValue').textContent = this.value;
+                generatePassword();
+            });
+
+            document.getElementById('uppercase').addEventListener('change', generatePassword);
+            document.getElementById('lowercase').addEventListener('change', generatePassword);
+            document.getElementById('numbers').addEventListener('change', generatePassword);
+            document.getElementById('symbols').addEventListener('change', generatePassword);
+            document.getElementById('generatePasswordBtn').addEventListener('click', generatePassword);
+            document.getElementById('copyGeneratedPassword').addEventListener('click', copyGeneratedPassword);
+            document.getElementById('usePassword').addEventListener('click', useGeneratedPassword);
+
+            // الإعدادات
+            document.getElementById('exportBtn').addEventListener('click', exportData);
+            document.getElementById('importBtn').addEventListener('click', importData);
+            document.getElementById('clearDataBtn').addEventListener('click', clearAllData);
+            document.getElementById('darkMode').addEventListener('change', toggleDarkMode);
+
+            // نافذة التصدير
+            document.getElementById('closeExportBtn').addEventListener('click', closeExportModal);
+
+            // نافذة الاستيراد
+            document.getElementById('closeImportBtn').addEventListener('click', closeImportModal);
+            document.getElementById('cancelImportBtn').addEventListener('click', closeImportModal);
+            document.getElementById('confirmImportBtn').addEventListener('click', confirmImportData);
+
+            // منع إغلاق النافذة عند النقر داخلها
+            document.querySelectorAll('.modal-content').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
+
+            // إغلاق النوافذ عند النقر على الخلفية
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // عرض شاشة الدخول
+        function showLoginScreen() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('generatorScreen').style.display = 'none';
+            document.getElementById('settingsScreen').style.display = 'none';
+            document.getElementById('masterPassword').value = '';
+            document.getElementById('loginError').textContent = '';
+            state.currentScreen = 'login';
+        }
+
+        // عرض لوحة التحكم
+        function showDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('generatorScreen').style.display = 'none';
+            document.getElementById('settingsScreen').style.display = 'none';
+            
+            // تحديث شريط التنقل
+            updateNavigation('dashboard');
+            state.currentScreen = 'dashboard';
+            
+            renderPasswords();
+        }
+
+        // عرض الشاشة المطلوبة
+        function showScreen(screen) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboard').style.display = screen === 'dashboard' ? 'block' : 'none';
+            document.getElementById('generatorScreen').style.display = screen === 'generator' ? 'block' : 'none';
+            document.getElementById('settingsScreen').style.display = screen === 'settings' ? 'block' : 'none';
+            
+            updateNavigation(screen);
+            state.currentScreen = screen;
+            
+            if (screen === 'generator') {
+                generatePassword();
+            }
+        }
+
+        // تحديث شريط التنقل
+        function updateNavigation(activeScreen) {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.screen === activeScreen) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // عرض كلمات المرور
+        function renderPasswords() {
+            const container = document.getElementById('passwordsList');
+            
+            // تصفية كلمات المرور
+            let filteredPasswords = state.passwords;
+            
+            // التصفية بالفئة
+            if (state.currentCategory !== 'all') {
+                filteredPasswords = filteredPasswords.filter(p => p.category === state.currentCategory);
+            }
+            
+            // البحث
+            if (state.searchQuery) {
+                const query = state.searchQuery.toLowerCase();
+                filteredPasswords = filteredPasswords.filter(p => 
+                    p.service.toLowerCase().includes(query) || 
+                    p.username.toLowerCase().includes(query) ||
+                    (p.notes && p.notes.toLowerCase().includes(query))
+                );
+            }
+            
+            // فرز حسب التاريخ
+            filteredPasswords.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // عرض الرسالة إذا لم توجد كلمات مرور
+            if (filteredPasswords.length === 0) {
+                const noResults = state.searchQuery || state.currentCategory !== 'all' 
+                    ? 'لا توجد نتائج تطابق بحثك'
+                    : 'لا توجد كلمات مرور. انقر على زر + لإضافة أول كلمة مرور';
+                
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-${state.searchQuery ? 'search' : 'key'}"></i>
+                        <h3>${noResults}</h3>
+                        <p>${state.searchQuery ? 'جرب البحث بكلمات مختلفة أو تغيير الفئة' : 'انقر على زر + لإضافة أول كلمة مرور'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // عرض كلمات المرور
+            container.innerHTML = filteredPasswords.map(password => `
+                <div class="password-card" data-id="${password.id}">
+                    <div class="card-header">
+                        <div class="service-info">
+                            <div class="service-icon">
+                                <i class="${password.icon}"></i>
+                            </div>
+                            <div>
+                                <div class="service-name">${password.service}</div>
+                                <div class="service-username">${password.username}</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn copy-btn" onclick="copyPassword(${password.id})" title="نسخ كلمة المرور">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="action-btn edit-btn" onclick="editPassword(${password.id})" title="تعديل">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete-btn" onclick="confirmDelete(${password.id})" title="حذف">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="password-display">
+                        <span class="password-hidden">••••••••••••</span>
+                        <button class="btn btn-outline btn-small" onclick="togglePasswordVisibilityInCard(${password.id})">
+                            <i class="fas fa-eye"></i> عرض
+                        </button>
+                    </div>
+                    ${password.notes ? `<div class="password-notes"><i class="fas fa-sticky-note"></i> ${password.notes}</div>` : ''}
+                    <div style="font-size: 12px; color: var(--gray); margin-top: 10px; display: flex; align-items: center; gap: 8px;">
+                        <i class="far fa-calendar"></i> ${formatDate(password.date)}
+                        <span style="margin-right: auto;"></span>
+                        <span class="category-badge" style="background: ${getCategoryColor(password.category)}; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px;">
+                            ${getCategoryName(password.category)}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // الحصول على اسم الفئة
+        function getCategoryName(category) {
+            const names = {
+                'social': 'التواصل',
+                'email': 'البريد',
+                'bank': 'البنوك',
+                'shopping': 'التسوق',
+                'work': 'العمل',
+                'other': 'أخرى'
+            };
+            return names[category] || 'أخرى';
+        }
+
+        // الحصول على لون الفئة
+        function getCategoryColor(category) {
+            const colors = {
+                'social': '#3b82f6',
+                'email': '#10b981',
+                'bank': '#8b5cf6',
+                'shopping': '#f59e0b',
+                'work': '#ef4444',
+                'other': '#6b7280'
+            };
+            return colors[category] || '#6b7280';
+        }
+
+        // نسخ كلمة المرور
+        function copyPassword(id) {
+            const password = state.passwords.find(p => p.id === id);
+            if (password) {
+                navigator.clipboard.writeText(password.password)
+                    .then(() => {
+                        showNotification('تم نسخ كلمة المرور إلى الحافظة');
+                    })
+                    .catch(() => {
+                        // طريقة بديلة للمتصفحات القديمة
+                        const tempInput = document.createElement('input');
+                        document.body.appendChild(tempInput);
+                        tempInput.value = password.password;
+                        tempInput.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(tempInput);
+                        showNotification('تم نسخ كلمة المرور إلى الحافظة');
+                    });
+                
+                // إذا كان النسخ التلقائي مفعلاً، إغلاق نافذة العرض
+                if (document.getElementById('autoCopy').checked) {
+                    const card = document.querySelector(`.password-card[data-id="${id}"]`);
+                    const displayElement = card.querySelector('.password-display span');
+                    const button = card.querySelector('.password-display button');
+                    
+                    if (displayElement.classList.contains('password-visible')) {
+                        displayElement.classList.remove('password-visible');
+                        displayElement.classList.add('password-hidden');
+                        displayElement.textContent = '••••••••••••';
+                        button.innerHTML = '<i class="fas fa-eye"></i> عرض';
+                    }
+                }
+            }
+        }
+
+        // عرض/إخفاء كلمة المرور في البطاقة
+        function togglePasswordVisibilityInCard(id) {
+            const card = document.querySelector(`.password-card[data-id="${id}"]`);
+            const password = state.passwords.find(p => p.id === id);
+            const displayElement = card.querySelector('.password-display span');
+            const button = card.querySelector('.password-display button');
+            
+            if (!password) return;
+            
+            if (displayElement.classList.contains('password-hidden')) {
+                displayElement.classList.remove('password-hidden');
+                displayElement.classList.add('password-visible');
+                displayElement.textContent = password.password;
+                button.innerHTML = '<i class="fas fa-eye-slash"></i> إخفاء';
+            } else {
+                displayElement.classList.remove('password-visible');
+                displayElement.classList.add('password-hidden');
+                displayElement.textContent = '••••••••••••';
+                button.innerHTML = '<i class="fas fa-eye"></i> عرض';
+            }
+        }
+
+        // فتح نافذة إضافة كلمة مرور جديدة
+        function openPasswordModal(passwordId = null) {
+            const modal = document.getElementById('passwordModal');
+            const form = document.getElementById('passwordForm');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            form.reset();
+            
+            if (passwordId) {
+                // وضع التعديل
+                const password = state.passwords.find(p => p.id === passwordId);
+                if (password) {
+                    state.editingPasswordId = passwordId;
+                    modalTitle.textContent = 'تعديل كلمة المرور';
+                    
+                    document.getElementById('passwordId').value = password.id;
+                    document.getElementById('serviceName').value = password.service;
+                    document.getElementById('username').value = password.username;
+                    document.getElementById('password').value = password.password;
+                    document.getElementById('category').value = password.category;
+                    document.getElementById('notes').value = password.notes || '';
+                    
+                    // اختيار الأيقونة
+                    const icon = password.icon || 'fas fa-globe';
+                    document.querySelectorAll('.icon-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                        if (opt.dataset.icon === icon) {
+                            opt.classList.add('selected');
+                        }
+                    });
+                    document.getElementById('selectedIcon').value = icon;
+                }
+            } else {
+                // وضع الإضافة
+                state.editingPasswordId = null;
+                modalTitle.textContent = 'إضافة كلمة مرور جديدة';
+                document.getElementById('passwordId').value = '';
+                
+                // إعادة تعيين الأيقونة إلى الافتراضي
+                document.querySelectorAll('.icon-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                    if (opt.dataset.icon === 'fas fa-globe') {
+                        opt.classList.add('selected');
+                    }
+                });
+                document.getElementById('selectedIcon').value = 'fas fa-globe';
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        // إغلاق نافذة كلمة المرور
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            state.editingPasswordId = null;
+        }
+
+        // حفظ كلمة المرور
+        function savePassword() {
+            const form = document.getElementById('passwordForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const id = state.editingPasswordId || Date.now();
+            const passwordData = {
+                id: id,
+                service: document.getElementById('serviceName').value.trim(),
+                username: document.getElementById('username').value.trim(),
+                password: document.getElementById('password').value.trim(),
+                category: document.getElementById('category').value,
+                icon: document.getElementById('selectedIcon').value,
+                notes: document.getElementById('notes').value.trim(),
+                date: new Date().toISOString()
+            };
+            
+            if (state.editingPasswordId) {
+                // تحديث كلمة مرور موجودة
+                const index = state.passwords.findIndex(p => p.id === state.editingPasswordId);
+                if (index !== -1) {
+                    state.passwords[index] = passwordData;
+                }
+            } else {
+                // إضافة كلمة مرور جديدة
+                state.passwords.push(passwordData);
+            }
+            
+            savePasswords();
+            renderPasswords();
+            closePasswordModal();
+            showNotification(state.editingPasswordId ? 'تم تحديث كلمة المرور' : 'تم إضافة كلمة المرور بنجاح');
+        }
+
+        // تعديل كلمة المرور
+        function editPassword(id) {
+            openPasswordModal(id);
+        }
+
+        // تأكيد الحذف
+        function confirmDelete(id) {
+            state.deletingPasswordId = id;
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        // إغلاق نافذة تأكيد الحذف
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+            state.deletingPasswordId = null;
+        }
+
+        // تأكيد حذف كلمة المرور
+        function confirmDeletePassword() {
+            if (state.deletingPasswordId) {
+                state.passwords = state.passwords.filter(p => p.id !== state.deletingPasswordId);
+                savePasswords();
+                renderPasswords();
+                closeConfirmModal();
+                showNotification('تم حذف كلمة المرور');
+            }
+        }
+
+        // توليد كلمة مرور عشوائية
+        function generatePassword() {
+            const length = parseInt(document.getElementById('lengthSlider').value);
+            const includeUppercase = document.getElementById('uppercase').checked;
+            const includeLowercase = document.getElementById('lowercase').checked;
+            const includeNumbers = document.getElementById('numbers').checked;
+            const includeSymbols = document.getElementById('symbols').checked;
+            
+            let chars = '';
+            if (includeUppercase) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (includeLowercase) chars += 'abcdefghijklmnopqrstuvwxyz';
+            if (includeNumbers) chars += '0123456789';
+            if (includeSymbols) chars += '!@#$%^&*';
+            
+            // إذا لم يتم اختيار أي نوع، استخدم كل الأنواع
+            if (!chars) {
+                chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+                document.getElementById('uppercase').checked = true;
+                document.getElementById('lowercase').checked = true;
+                document.getElementById('numbers').checked = true;
+                document.getElementById('symbols').checked = true;
+            }
+            
+            let password = '';
+            
+            // التأكد من وجود محرف واحد على الأقل من كل نوع مختار
+            const selectedTypes = [];
+            if (includeUppercase) selectedTypes.push('uppercase');
+            if (includeLowercase) selectedTypes.push('lowercase');
+            if (includeNumbers) selectedTypes.push('numbers');
+            if (includeSymbols) selectedTypes.push('symbols');
+            
+            if (selectedTypes.length > 0) {
+                for (let i = 0; i < Math.min(selectedTypes.length, length); i++) {
+                    switch(selectedTypes[i]) {
+                        case 'uppercase':
+                            password += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
+                            break;
+                        case 'lowercase':
+                            password += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)];
+                            break;
+                        case 'numbers':
+                            password += '0123456789'[Math.floor(Math.random() * 10)];
+                            break;
+                        case 'symbols':
+                            password += '!@#$%^&*'[Math.floor(Math.random() * 8)];
+                            break;
+                    }
+                }
+            }
+            
+            // إكمال الباقي
+            for (let i = password.length; i < length; i++) {
+                password += chars[Math.floor(Math.random() * chars.length)];
+            }
+            
+            // خلط كلمة المرور
+            password = password.split('').sort(() => Math.random() - 0.5).join('');
+            
+            // حساب قوة كلمة المرور
+            let strength = 0;
+            if (length >= 8) strength += 25;
+            if (length >= 12) strength += 25;
+            if (includeUppercase && includeLowercase) strength += 20;
+            if (includeNumbers) strength += 15;
+            if (includeSymbols) strength += 15;
+            
+            // تحديث عرض كلمة المرور
+            document.getElementById('generatedPassword').textContent = password;
+            state.generatedPassword = password;
+            
+            // تحديث مؤشر القوة
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            strengthFill.className = 'strength-fill';
+            
+            if (strength < 50) {
+                strengthFill.classList.add('strength-weak');
+                strengthText.textContent = 'ضعيفة';
+            } else if (strength < 70) {
+                strengthFill.classList.add('strength-medium');
+                strengthText.textContent = 'متوسطة';
+            } else if (strength < 90) {
+                strengthFill.classList.add('strength-strong');
+                strengthText.textContent = 'قوية';
+            } else {
+                strengthFill.classList.add('strength-very-strong');
+                strengthText.textContent = 'قوية جداً';
+            }
+            
+            return password;
+        }
+
+        // توليد واستخدام كلمة مرور مباشرة
+        function generateAndUsePassword() {
+            const password = generatePassword();
+            document.getElementById('password').value = password;
+            showNotification('تم توليد كلمة مرور جديدة');
+        }
+
+        // نسخ كلمة المرور من المولد
+        function copyFromGenerator() {
+            if (state.generatedPassword) {
+                document.getElementById('password').value = state.generatedPassword;
+                showNotification('تم نسخ كلمة المرور من المولد');
+            } else {
+                const password = generatePassword();
+                document.getElementById('password').value = password;
+                showNotification('تم توليد ونسخ كلمة مرور جديدة');
+            }
+        }
+
+        // نسخ كلمة المرور المولدة
+        function copyGeneratedPassword() {
+            const password = document.getElementById('generatedPassword').textContent;
+            navigator.clipboard.writeText(password)
+                .then(() => {
+                    showNotification('تم نسخ كلمة المرور إلى الحافظة');
+                });
+        }
+
+        // استخدام كلمة المرور المولدة
+        function useGeneratedPassword() {
+            const password = document.getElementById('generatedPassword').textContent;
+            document.getElementById('password').value = password;
+            showScreen('dashboard');
+            setTimeout(() => {
+                openPasswordModal();
+            }, 300);
+        }
+
+        // تصدير البيانات
+        function exportData() {
+            const exportModal = document.getElementById('exportModal');
+            const exportDataText = document.getElementById('exportData');
+            
+            const data = {
+                version: '1.0',
+                exportDate: new Date().toISOString(),
+                count: state.passwords.length,
+                passwords: state.passwords
+            };
+            
+            exportDataText.value = JSON.stringify(data, null, 2);
+            exportModal.style.display = 'flex';
+        }
+
+        // إغلاق نافذة التصدير
+        function closeExportModal() {
+            document.getElementById('exportModal').style.display = 'none';
+        }
+
+        // استيراد البيانات
+        function importData() {
+            document.getElementById('importModal').style.display = 'flex';
+            document.getElementById('importError').textContent = '';
+        }
+
+        // إغلاق نافذة الاستيراد
+        function closeImportModal() {
+            document.getElementById('importModal').style.display = 'none';
+            document.getElementById('importData').value = '';
+        }
+
+        // تأكيد استيراد البيانات
+        function confirmImportData() {
+            const importDataText = document.getElementById('importData').value.trim();
+            const importError = document.getElementById('importError');
+            
+            if (!importDataText) {
+                importError.textContent = 'الرجاء لصق بيانات التصدير';
+                return;
+            }
+            
+            try {
+                const data = JSON.parse(importDataText);
+                
+                if (!data.passwords || !Array.isArray(data.passwords)) {
+                    throw new Error('صيغة البيانات غير صحيحة');
+                }
+                
+                if (confirm(`هل تريد استيراد ${data.passwords.length} كلمة مرور؟ سيتم استبدال البيانات الحالية.`)) {
+                    state.passwords = data.passwords;
+                    savePasswords();
+                    renderPasswords();
+                    closeImportModal();
+                    showNotification(`تم استيراد ${data.passwords.length} كلمة مرور بنجاح`);
+                }
+            } catch (error) {
+                importError.textContent = 'بيانات غير صالحة: ' + error.message;
+            }
+        }
+
+        // حذف جميع البيانات
+        function clearAllData() {
+            if (confirm('هل أنت متأكد من حذف جميع كلمات المرور والإعدادات؟ هذا الإجراء لا يمكن التراجع عنه.')) {
+                localStorage.removeItem('passwordManagerData');
+                state.passwords = [];
+                savePasswords();
+                renderPasswords();
+                showNotification('تم حذف جميع البيانات');
+            }
+        }
+
+        // تفعيل/تعطيل الوضع الداكن
+        function toggleDarkMode() {
+            const darkMode = document.getElementById('darkMode').checked;
+            
+            if (darkMode) {
+                enableDarkMode();
+            } else {
+                disableDarkMode();
+            }
+            
+            savePasswords();
+        }
+
+        // تفعيل الوضع الداكن
+        function enableDarkMode() {
+            document.documentElement.style.setProperty('--light', '#1f2937');
+            document.documentElement.style.setProperty('--dark', '#f9fafb');
+            document.documentElement.style.setProperty('--card-bg', '#374151');
+            document.documentElement.style.setProperty('--gray-light', '#4b5563');
+            document.documentElement.style.setProperty('--gray', '#9ca3af');
+            document.documentElement.style.setProperty('--gray-dark', '#d1d5db');
+            document.body.style.backgroundColor = '#111827';
+        }
+
+        // تعطيل الوضع الداكن
+        function disableDarkMode() {
+            document.documentElement.style.setProperty('--light', '#f9fafb');
+            document.documentElement.style.setProperty('--dark', '#1f2937');
+            document.documentElement.style.setProperty('--card-bg', '#ffffff');
+            document.documentElement.style.setProperty('--gray-light', '#e5e7eb');
+            document.documentElement.style.setProperty('--gray', '#6b7280');
+            document.documentElement.style.setProperty('--gray-dark', '#374151');
+            document.body.style.backgroundColor = '#f9fafb';
+        }
+
+        // تحديث عدد كلمات المرور
+        function updatePasswordCount() {
+            const count = state.passwords.length;
+            document.getElementById('passwordCount').textContent = `${count} كلمة مرور`;
+        }
+
+        // عرض/إخفاء كلمة المرور في النافذة المنبثقة
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // عرض الإشعارات
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.style.display = 'flex';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // تنسيق التاريخ
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) {
+                return 'الآن';
+            } else if (diffMins < 60) {
+                return `منذ ${diffMins} دقيقة`;
+            } else if (diffHours < 24) {
+                return `منذ ${diffHours} ساعة`;
+            } else if (diffDays === 1) {
+                return 'أمس';
+            } else if (diffDays < 7) {
+                return `منذ ${diffDays} أيام`;
+            } else {
+                return date.toLocaleDateString('ar-EG');
+            }
+        }
+
+        // جعل الدوال متاحة عالمياً
+        window.copyPassword = copyPassword;
+        window.editPassword = editPassword;
+        window.confirmDelete = confirmDelete;
+        window.togglePasswordVisibilityInCard = togglePasswordVisibilityInCard;
+        window.showScreen = showScreen;
+        window.generateAndUsePassword = generateAndUsePassword;
+        window.copyFromGenerator = copyFromGenerator;
+    </script>
+</body>
+</html>
